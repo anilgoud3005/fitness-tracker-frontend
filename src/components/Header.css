@@ -1,0 +1,23 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0px;
+  right: 0;
+  height: 60px;
+  background-color: #3A5A99; /* calm blue */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.user {
+  font-size: 14px;
+}

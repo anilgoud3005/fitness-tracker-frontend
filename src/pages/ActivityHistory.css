@@ -1,0 +1,81 @@
+.history-page {
+  margin-left: 220px;
+  margin-top: 80px;
+  padding: 30px;
+  max-width: 800px;
+}
+
+.history-page h2 {
+  color: #3A5A99;
+  margin-bottom: 20px;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.filter-bar label {
+  font-weight: 500;
+  color: #333;
+}
+
+.filter-bar select {
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.log-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.log-card h4 {
+  color: #2ECC71;
+  margin-bottom: 10px;
+}
+
+.log-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background-color: #3A5A99;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.no-results {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}

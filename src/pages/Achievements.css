@@ -1,0 +1,81 @@
+.achievements-page {
+  margin-left: 220px;
+  margin-top: 80px;
+  padding: 30px;
+  max-width: 800px;
+}
+
+.achievements-page h2 {
+  color: #3A5A99;
+  margin-bottom: 30px;
+}
+
+.badge-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.badge-card {
+  width: 140px;
+  height: 140px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.badge-card.earned {
+  border: 2px solid #2ECC71;
+}
+
+.badge-card.locked {
+  opacity: 0.5;
+}
+
+.locked-overlay {
+  position: absolute;
+  bottom: 10px;
+  font-size: 18px;
+  color: #999;
+}
+
+.streak-summary {
+  background-color: #ecf9f1;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #27ae60;
+}
+
+.streak-summary span {
+  font-weight: bold;
+}
+
+.total-stats {
+  display: flex;
+  gap: 30px;
+}
+
+.stat-block {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.stat-block h5 {
+  color: #3A5A99;
+  margin-bottom: 10px;
+}

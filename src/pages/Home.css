@@ -1,0 +1,148 @@
+/* Landing Page */
+
+.landing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3A5A99;
+  padding: 20px 40px;
+  color: white;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-links .btn {
+  margin-left: 15px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-btn {
+  background-color: white;
+  color: #3A5A99;
+}
+
+.signup-btn {
+  background-color: #2ECC71;
+  color: white;
+}
+
+.hero {
+  height: 650px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 40px;
+  text-align: center;
+  color: white;
+  border-radius: 10px;
+}
+
+.hero h2 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.hero-cta-btn {
+  background-color: #2ECC71;
+  color: white;
+  padding: 12px 24px;
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.features {
+  padding: 60px 20px;
+  text-align: center;
+  background-color: #f4f6f8;
+}
+
+.feature-cards {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.card {
+  background-color: white;
+  padding: 30px;
+  width: 250px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.card span {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.how-it-works {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.step span {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.testimonials {
+  background-color: #ecf0f1;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.testimonials blockquote {
+  font-style: italic;
+  font-size: 16px;
+  margin: 15px auto;
+  max-width: 600px;
+}
+
+.landing-footer {
+  background-color: #1e1e2f;
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.footer-links {
+  margin-bottom: 15px;
+}
+
+.footer-links a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-size: 14px;
+}
