@@ -97,3 +97,21 @@
   font-style: italic;
   color: #666;
 }
+
+.diet-plan {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 10px;
+  border-left: 4px solid #2ecc71;
+}
+
+.diet-plan h3 {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.diet-plan ul {
+  padding-left: 1.2rem;
+  list-style-type: disc;
+}
