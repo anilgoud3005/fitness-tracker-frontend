@@ -12,8 +12,10 @@ const Signup = () => {
     name: '',
     email: '',
     password: '',
-    weight: '',
-    height: '',
+    gender: '',
+    phone: '',
+    address: '',
+    age: ''
   });
 
   const [error, setError] = useState('');
@@ -49,8 +51,16 @@ const Signup = () => {
         <input type="text" placeholder="Full Name" name="name" onChange={handleChange} required />
         <input type="email" placeholder="Email" name="email" onChange={handleChange} required />
         <input type="password" placeholder="Password" name="password" onChange={handleChange} required />
-        <input type="number" placeholder="Weight (kg)" name="weight" onChange={handleChange} required />
-        <input type="number" placeholder="Height (cm)" name="height" onChange={handleChange} required />
+        <input type="number" placeholder="Age" name="age" onChange={handleChange} required />
+        <select name="gender" onChange={handleChange} required>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <input type="tel" placeholder="Phone Number" name="phone" onChange={handleChange} required />
+        <textarea placeholder="Address" name="address" onChange={handleChange} required />
+
         <button type="submit" className="auth-btn">
           {loading ? 'Signing Up...' : 'Sign Up'}
         </button>

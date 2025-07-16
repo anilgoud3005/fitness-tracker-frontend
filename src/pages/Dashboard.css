@@ -115,3 +115,28 @@
   padding-left: 1.2rem;
   list-style-type: disc;
 }
+
+
+.bmi-edit-btn,
+.bmi-save-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.bmi-edit-btn:hover,
+.bmi-save-btn:hover {
+  text-decoration: underline;
+}
+
+.summary-card input[type="number"] {
+  width: 100%;
+  padding: 0.4rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

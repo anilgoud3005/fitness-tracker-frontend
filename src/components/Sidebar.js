@@ -12,7 +12,7 @@ const Sidebar = () => {
         <Link to="/history">📅 History</Link>
         <Link to="/achievements">🏅 Achievements</Link>
         <Link to="/profile">👤 Profile</Link>
-        <Link to="/settings">⚙️ Settings</Link>
+        {/* <Link to="/settings">⚙️ Settings</Link> */}
       </nav>
     </aside>
   );

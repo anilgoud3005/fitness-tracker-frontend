@@ -1,25 +1,63 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Dashboard.css';
 import ProgressBar from '../components/ProgressBar';
 import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
 
-  // Calculate BMI if weight and height are present
-  const bmi = user?.weight && user?.height
-    ? (user.weight / ((user.height / 100) ** 2)).toFixed(1)
-    : null;
+  const [editing, setEditing] = useState(false);
+  const [localHeight, setLocalHeight] = useState('');
+  const [localWeight, setLocalWeight] = useState('');
+  const [bmiData, setBmiData] = useState({ bmi: null, category: '', height: '', weight: '' });
 
-  // Get BMI category and color
-  const getBmiCategory = (bmi) => {
-    if (bmi < 18.5) return { label: 'Underweight', color: '#3498DB' };
-    if (bmi < 25) return { label: 'Normal', color: '#2ECC71' };
-    if (bmi < 30) return { label: 'Overweight', color: '#F39C12' };
-    return { label: 'Obese', color: '#E74C3C' };
-  };
+  // Fetch BMI from API
+  useEffect(() => {
+    const fetchBMI = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5050/api/auth/bmi/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const { bmi, category, height, weight } = res.data;
+        setBmiData({ bmi, category, height, weight });
+        setLocalHeight(height);
+        setLocalWeight(weight);
+      } catch (err) {
+        console.error('BMI fetch error:', err.response?.data || err.message);
+      }
+    };
 
-  // Get diet plan based on BMI category
+    if (user?.id) fetchBMI();
+  }, [user, token]);
+
+  const handleSave = async () => {
+  try {
+    const res = await axios.put(`http://localhost:5050/api/auth/bmi/${user.id}`, {
+      height: localHeight,
+      weight: localWeight
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const { height, weight } = res.data.user;
+    const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+    let category = '';
+
+    if (bmi < 18.5) category = 'Underweight';
+    else if (bmi < 25) category = 'Normal';
+    else if (bmi < 30) category = 'Overweight';
+    else category = 'Obese';
+
+    setBmiData({ bmi, category, height, weight });
+    setEditing(false);
+  } catch (err) {
+    console.error('Error updating BMI:', err.response?.data || err.message);
+  }
+};
+
+
+  // Diet Plan
   const getDietPlan = (bmi) => {
     if (bmi < 18.5) {
       return [
@@ -84,23 +122,47 @@ const Dashboard = () => {
           <h5>Workout Time</h5>
           <p>42 min</p>
         </div>
-        {bmi && (() => {
-          const { label, color } = getBmiCategory(bmi);
-          return (
-            <div className="summary-card" style={{ borderLeft: `5px solid ${color}` }}>
-              <h5>Your BMI</h5>
-              <p>{bmi} <span style={{ color }}>{label}</span></p>
-            </div>
-          );
-        })()}
+        <div className="summary-card">
+          <h5>Your BMI</h5>
+          {editing ? (
+            <>
+              <input
+                type="number"
+                placeholder="Weight (kg)"
+                value={localWeight}
+                onChange={(e) => setLocalWeight(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Height (cm)"
+                value={localHeight}
+                onChange={(e) => setLocalHeight(e.target.value)}
+              />
+              <button onClick={handleSave} className="bmi-save-btn">Save</button>
+            </>
+          ) : (
+            <>
+              {bmiData.bmi ? (
+                <p>
+                  {bmiData.bmi} <span style={{ color: getColor(bmiData.bmi) }}>{bmiData.category}</span>
+                  <button className="bmi-edit-btn" onClick={() => setEditing(true)}>Edit</button>
+                </p>
+              ) : (
+                <p>
+                  No data yet. <button className="bmi-edit-btn" onClick={() => setEditing(true)}>Add</button>
+                </p>
+              )}
+            </>
+          )}
+        </div>
       </section>
 
-      {/* Diet Plan Based on BMI */}
-      {bmi && (
+      {/* Diet Plan */}
+      {bmiData.bmi && (
         <section className="diet-plan">
           <h3>Recommended Diet Plan</h3>
           <ul>
-            {getDietPlan(bmi).map((tip, index) => (
+            {getDietPlan(bmiData.bmi).map((tip, index) => (
               <li key={index}>{tip}</li>
             ))}
           </ul>
@@ -119,6 +181,14 @@ const Dashboard = () => {
       </section>
     </div>
   );
+};
+
+// Optional color coding
+const getColor = (bmi) => {
+  if (bmi < 18.5) return '#3498DB';
+  if (bmi < 25) return '#2ECC71';
+  if (bmi < 30) return '#F39C12';
+  return '#E74C3C';
 };
 
 export default Dashboard;
