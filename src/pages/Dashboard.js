@@ -11,80 +11,72 @@ const Dashboard = () => {
   const [localHeight, setLocalHeight] = useState('');
   const [localWeight, setLocalWeight] = useState('');
   const [bmiData, setBmiData] = useState({ bmi: null, category: '', height: '', weight: '' });
+  const [dietPlan, setDietPlan] = useState([]);
 
-  // Fetch BMI from API
+  // Fetch BMI and Diet Plan
   useEffect(() => {
     const fetchBMI = async () => {
       try {
         const res = await axios.get(`http://localhost:5050/api/auth/bmi/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const { bmi, category, height, weight } = res.data;
         setBmiData({ bmi, category, height, weight });
         setLocalHeight(height);
         setLocalWeight(weight);
+
+        // Fetch diet plan for this BMI
+        const dietRes = await axios.get(`http://localhost:5050/api/diet/bmi/${bmi}`);
+        setDietPlan(dietRes.data.diet || []);
       } catch (err) {
-        console.error('BMI fetch error:', err.response?.data || err.message);
+        console.error('Error fetching BMI or diet plan:', err.response?.data || err.message);
       }
     };
 
     if (user?.id) fetchBMI();
   }, [user, token]);
 
+  // Save new height/weight and refetch diet
   const handleSave = async () => {
-  try {
-    const res = await axios.put(`http://localhost:5050/api/auth/bmi/${user.id}`, {
-      height: localHeight,
-      weight: localWeight
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    try {
+      const res = await axios.put(
+        `http://localhost:5050/api/auth/bmi/${user.id}`,
+        {
+          height: localHeight,
+          weight: localWeight
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
 
-    const { height, weight } = res.data.user;
-    const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-    let category = '';
+      const { height, weight } = res.data.user;
+      const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+      let category = '';
 
-    if (bmi < 18.5) category = 'Underweight';
-    else if (bmi < 25) category = 'Normal';
-    else if (bmi < 30) category = 'Overweight';
-    else category = 'Obese';
+      if (bmi < 18.5) category = 'Underweight';
+      else if (bmi < 25) category = 'Normal';
+      else if (bmi < 30) category = 'Overweight';
+      else category = 'Obese';
 
-    setBmiData({ bmi, category, height, weight });
-    setEditing(false);
-  } catch (err) {
-    console.error('Error updating BMI:', err.response?.data || err.message);
-  }
-};
+      setBmiData({ bmi, category, height, weight });
+      setEditing(false);
 
-
-  // Diet Plan
-  const getDietPlan = (bmi) => {
-    if (bmi < 18.5) {
-      return [
-        "Increase calorie intake with healthy fats and proteins.",
-        "Eat frequent meals with snacks in between.",
-        "Include foods like nuts, dairy, and starchy vegetables.",
-      ];
-    } else if (bmi < 25) {
-      return [
-        "Maintain a balanced diet rich in vegetables, fruits, and lean proteins.",
-        "Stay hydrated and limit processed foods.",
-        "Continue with regular meals and moderate activity.",
-      ];
-    } else if (bmi < 30) {
-      return [
-        "Reduce sugar and refined carbs.",
-        "Focus on high-fiber vegetables and lean protein.",
-        "Avoid late-night snacking and sugary drinks.",
-      ];
-    } else {
-      return [
-        "Adopt a low-carb, high-fiber diet.",
-        "Avoid processed foods, fried items, and sugary snacks.",
-        "Consult a dietitian for a personalized weight-loss plan.",
-      ];
+      const dietRes = await axios.get(`http://localhost:5050/api/diet/bmi/${bmi}`);
+      setDietPlan(dietRes.data.diet || []);
+    } catch (err) {
+      console.error('Error updating BMI:', err.response?.data || err.message);
     }
   };
+
+  // Group diet plans by meal type
+  const groupedDietPlan = dietPlan.reduce((acc, item) => {
+    const mealType = item.MealType?.name || 'Other';
+    if (!acc[mealType]) acc[mealType] = [];
+    acc[mealType].push(item);
+    return acc;
+  }, {});
 
   return (
     <div className="dashboard">
@@ -101,7 +93,6 @@ const Dashboard = () => {
           <ProgressBar percentage={60} color="#2ECC71" />
           <p>3 of 5 workouts completed</p>
         </div>
-
         <div className="streak-card">
           <h4>Current Streak</h4>
           <p>🔥 4 days in a row</p>
@@ -157,15 +148,31 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* Diet Plan */}
+      {/* Diet Plan Grouped by Meal Type */}
       {bmiData.bmi && (
         <section className="diet-plan">
           <h3>Recommended Diet Plan</h3>
-          <ul>
-            {getDietPlan(bmiData.bmi).map((tip, index) => (
-              <li key={index}>{tip}</li>
-            ))}
-          </ul>
+          {Object.keys(groupedDietPlan).length > 0 ? (
+            Object.keys(groupedDietPlan).map((mealType, idx) => (
+              <div key={idx} className="meal-group">
+                <h4>{mealType}</h4>
+                <ul>
+                  {groupedDietPlan[mealType].map((plan, i) => (
+                    <li key={i}>
+                      <strong>{plan.title}</strong><br />
+                      {plan.instructions && <em>{plan.instructions}</em>}<br />
+                      Calories: {plan.calories} kcal |
+                      Protein: {plan.protein_grams}g |
+                      Carbs: {plan.carb_grams}g |
+                      Fats: {plan.fat_grams}g
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          ) : (
+            <p>No diet plan found for your BMI.</p>
+          )}
         </section>
       )}
 
@@ -183,7 +190,7 @@ const Dashboard = () => {
   );
 };
 
-// Optional color coding
+// Color coding for BMI
 const getColor = (bmi) => {
   if (bmi < 18.5) return '#3498DB';
   if (bmi < 25) return '#2ECC71';

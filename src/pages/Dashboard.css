@@ -140,3 +140,14 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+.meal-group {
+  background: #f9f9f9;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 5px solid #2ECC71;
+  border-radius: 5px;
+}
+
+.meal-group h4 {
+  margin-bottom: 0.5rem;
+}
