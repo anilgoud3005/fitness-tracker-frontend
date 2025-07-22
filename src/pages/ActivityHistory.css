@@ -79,3 +79,30 @@
   color: #666;
   text-align: center;
 }
+.history-page {
+  max-width: 700px;
+  /* margin: auto; */
+  padding: 1rem;
+}
+
+.filter-bar {
+  margin-bottom: 1rem;
+}
+
+.log-list .log-card {
+  background: #f8f8f8;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #2ECC71;
+  border-radius: 6px;
+}
+
+.log-actions button {
+  margin-top: 0.5rem;
+  background: #e74c3c;
+  color: white;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

@@ -1,18 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './LogActivity.css';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 const activityTypes = ['Walking', 'Running', 'Swimming', 'Cycling', 'Gym', 'Yoga'];
 
 const LogActivity = () => {
+  const { user, token } = useContext(AuthContext);
   const [activity, setActivity] = useState('');
   const [duration, setDuration] = useState('');
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In real app, you'd send data to backend here
-    setSubmitted(true);
+    setError('');
+
+    if (!activity || !duration) {
+      setError('Please select an activity and enter duration.');
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:5050/api/activity/log', {
+        user_id: user.id,
+        activity_type: activity,
+        duration_minutes: parseInt(duration),
+        notes,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to log activity.');
+    }
   };
 
   return (
@@ -21,6 +45,8 @@ const LogActivity = () => {
 
       {!submitted ? (
         <form onSubmit={handleSubmit} className="log-form">
+          {error && <p className="error-text">{error}</p>}
+
           <label>Activity Type</label>
           <div className="activity-options">
             {activityTypes.map((type) => (
