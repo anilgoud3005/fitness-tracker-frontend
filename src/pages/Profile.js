@@ -1,65 +1,74 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Profile.css';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 const Profile = () => {
-  const [editMode, setEditMode] = useState(false);
-  const [name, setName] = useState('Anil');
-  const [email, setEmail] = useState('anil@example.com');
-  const [password, setPassword] = useState('');
+  const { user, token, dispatch } = useContext(AuthContext);
 
-  const handleSave = () => {
-    setEditMode(false);
-    // Send update to backend here
+  const [editMode, setEditMode] = useState(false);
+  const [form, setForm] = useState({
+    name: user.name,
+    email: user.email,
+    password: '',
+    gender: user.gender || '',
+    phone: user.phone || '',
+    address: user.address || '',
+    weight: user.weight || '',
+    height: user.height || '',
+    age: user.age || ''
+  });
+
+  const handleChange = (e) => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const res = await axios.put(`http://localhost:5050/api/user/update/${user.id}`, form, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      dispatch({ type: 'LOGIN', payload: { user: res.data.user, token } });
+      setEditMode(false);
+    } catch (err) {
+      console.error('Update failed:', err.response?.data || err.message);
+    }
   };
 
   return (
     <div className="profile-page">
       <h2>My Profile</h2>
 
-      {/* Avatar */}
       <div className="avatar-section">
         <span role="img" aria-label="avatar" className="avatar">🧑‍💻</span>
-        <p>{name}</p>
+        <p>{form.name}</p>
       </div>
 
-      {/* Stats */}
-      <div className="profile-stats">
-        <div className="stat-block">
-          <h5>Total Workouts</h5>
-          <p>18</p>
-        </div>
-        <div className="stat-block">
-          <h5>Total Minutes</h5>
-          <p>720</p>
-        </div>
-      </div>
-
-      {/* Edit Fields */}
       <div className="profile-info">
-        <label>Name</label>
-        <input
-          type="text"
-          value={name}
-          disabled={!editMode}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <label>Email</label>
-        <input
-          type="email"
-          value={email}
-          disabled={!editMode}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <label>Password</label>
-        <input
-          type="password"
-          placeholder="••••••"
-          value={password}
-          disabled={!editMode}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        {[
+          { label: 'Name', name: 'name', type: 'text' },
+          { label: 'Email', name: 'email', type: 'email' },
+          { label: 'Password', name: 'password', type: 'password', placeholder: '••••••' },
+          { label: 'Gender', name: 'gender', type: 'text' },
+          { label: 'Phone', name: 'phone', type: 'text' },
+          { label: 'Address', name: 'address', type: 'text' },
+          { label: 'Weight (kg)', name: 'weight', type: 'number' },
+          { label: 'Height (cm)', name: 'height', type: 'number' },
+          { label: 'Age', name: 'age', type: 'number' }
+        ].map(field => (
+          <React.Fragment key={field.name}>
+            <label>{field.label}</label>
+            <input
+              type={field.type}
+              name={field.name}
+              placeholder={field.placeholder || ''}
+              value={form[field.name]}
+              onChange={handleChange}
+              disabled={!editMode}
+            />
+          </React.Fragment>
+        ))}
 
         {editMode ? (
           <button className="profile-btn" onClick={handleSave}>Save Changes</button>
