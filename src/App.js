@@ -29,6 +29,10 @@ import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import PrivateRoute from './routes/PrivateRoute';
 
+import Blogs from './pages/Blogs';
+import Videos from './pages/Videos';
+
+
 function App() {
   return (
     <Router>
@@ -65,27 +69,27 @@ function App() {
         <Route
           path="/log"
           element={
-           <PrivateRoute>
-             <>
-              <Header />
-              <Sidebar />
-              <LogActivity />
-              <Footer />
-            </>
-           </PrivateRoute>
+            <PrivateRoute>
+              <>
+                <Header />
+                <Sidebar />
+                <LogActivity />
+                <Footer />
+              </>
+            </PrivateRoute>
           }
         />
         <Route
           path="/goals"
           element={
-           <PrivateRoute>
-             <>
-              <Header />
-              <Sidebar />
-              <Goals />
-              <Footer />
-            </>
-           </PrivateRoute>
+            <PrivateRoute>
+              <>
+                <Header />
+                <Sidebar />
+                <Goals />
+                <Footer />
+              </>
+            </PrivateRoute>
           }
         />
         <Route
@@ -93,11 +97,11 @@ function App() {
           element={
             <PrivateRoute>
               <>
-              <Header />
-              <Sidebar />
-              <ActivityHistory />
-              <Footer />
-            </>
+                <Header />
+                <Sidebar />
+                <ActivityHistory />
+                <Footer />
+              </>
             </PrivateRoute>
           }
         />
@@ -106,11 +110,11 @@ function App() {
           element={
             <PrivateRoute>
               <>
-              <Header />
-              <Sidebar />
-              <Achievements />
-              <Footer />
-            </>
+                <Header />
+                <Sidebar />
+                <Achievements />
+                <Footer />
+              </>
             </PrivateRoute>
           }
         />
@@ -119,24 +123,52 @@ function App() {
           element={
             <PrivateRoute>
               <>
-              <Header />
-              <Sidebar />
-              <Profile />
-              <Footer />
-            </>
+                <Header />
+                <Sidebar />
+                <Profile />
+                <Footer />
+              </>
             </PrivateRoute>
           }
         />
+        <Route
+          path="/blogs"
+          element={
+            <PrivateRoute>
+              <>
+                <Header />
+                <Sidebar />
+                <Blogs />
+                <Footer />
+              </>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/videos"
+          element={
+            <PrivateRoute>
+              <>
+                <Header />
+                <Sidebar />
+                <Videos />
+                <Footer />
+              </>
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/settings"
           element={
             <PrivateRoute>
               <>
-              <Header />
-              <Sidebar />
-              <Settings />
-              <Footer />
-            </>
+                <Header />
+                <Sidebar />
+                <Settings />
+                <Footer />
+              </>
             </PrivateRoute>
           }
         />
