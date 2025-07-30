@@ -10,7 +10,7 @@ const Sidebar = () => {
         <Link to="/log">📝 Log Activity</Link>
         <Link to="/goals">🎯 Goals</Link>
         <Link to="/history">📅 History</Link>
-        <Link to="/achievements">🏅 Achievements</Link>
+        {/* <Link to="/achievements">🏅 Achievements</Link> */}
         <Link to="/profile">👤 Profile</Link>
         <Link to="/blogs">📰 Blogs</Link>
         <Link to="/videos">🎥 Videos</Link>
