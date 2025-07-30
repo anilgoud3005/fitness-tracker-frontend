@@ -48,11 +48,12 @@ const Dashboard = () => {
 
   const fetchActivitySummary = async () => {
     try {
-      const res = await axios.get(`http://localhost:5050/api/activity/steps/${user.id}`, {
+      const res = await axios.get(`http://localhost:5050/api/activity/summary/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       setStepsToday(res.data.steps || 0);
-      setCaloriesBurned((res.data.totalMinutes || 0) * 6); // e.g. 6 kcal/min
+      setCaloriesBurned(res.data.calories || 0);
       setWorkoutMinutes(res.data.totalMinutes || 0);
     } catch (err) {
       console.error('Error fetching activity summary:', err);
@@ -213,7 +214,6 @@ const Dashboard = () => {
   );
 };
 
-// BMI Color Utility
 const getColor = (bmi) => {
   if (bmi < 18.5) return '#3498DB';
   if (bmi < 25) return '#2ECC71';
