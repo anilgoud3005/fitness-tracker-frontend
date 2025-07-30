@@ -58,7 +58,15 @@ const Signup = () => {
           <option value="Female">Female</option>
           <option value="Other">Other</option>
         </select>
-        <input type="tel" placeholder="Phone Number" name="phone" onChange={handleChange} required />
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Phone Number"
+          pattern="\d{10}"
+          maxLength={10}
+          onChange={handleChange}
+          required
+        />
         <textarea placeholder="Address" name="address" onChange={handleChange} required />
 
         <button type="submit" className="auth-btn">
