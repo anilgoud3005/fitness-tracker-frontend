@@ -17,14 +17,17 @@ const Dashboard = () => {
   const [stepsToday, setStepsToday] = useState(0);
   const [caloriesBurned, setCaloriesBurned] = useState(0);
   const [workoutMinutes, setWorkoutMinutes] = useState(0);
-  const [goalProgress, setGoalProgress] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [activeGoal, setActiveGoal] = useState(null);
+  const [pastGoals, setPastGoals] = useState([]);
 
   useEffect(() => {
     if (user?.id) {
       fetchBMI();
       fetchActivitySummary();
       fetchGoalProgress();
+      fetchCurrentGoal();
+      fetchPastGoals(); // 🆕 Fetch list of past goals
     }
   }, [user]);
 
@@ -65,10 +68,36 @@ const Dashboard = () => {
       const res = await axios.get(`http://localhost:5050/api/goals/progress/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setGoalProgress(res.data.progress || 0);
       setCurrentStreak(res.data.streak || 0);
     } catch (err) {
-      console.error('Error fetching goal progress:', err);
+      console.error('Error fetching goal streak:', err);
+    }
+  };
+
+  const fetchCurrentGoal = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5050/api/goals/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const goals = res.data;
+      const nextGoal = goals.find(goal => goal.achieved_count < goal.target_count);
+      setActiveGoal(nextGoal || null);
+    } catch (err) {
+      console.error('Error fetching current goal:', err);
+    }
+  };
+
+  const fetchPastGoals = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5050/api/goals/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const completed = res.data.filter(goal => goal.achieved_count >= goal.target_count);
+      setPastGoals(completed);
+    } catch (err) {
+      console.error('Error fetching past goals:', err);
     }
   };
 
@@ -114,20 +143,62 @@ const Dashboard = () => {
         <p>You're doing great! Let’s keep the momentum going.</p>
       </section>
 
-      {/* Weekly Progress + Streak */}
-      <section className="progress-streak">
-        <div className="progress-card">
-          <h4>Weekly Goal Progress</h4>
-          <ProgressBar percentage={goalProgress} color="#2ECC71" />
-          <p>{(goalProgress / 20).toFixed(1)} of 5 workouts completed</p>
-        </div>
-        <div className="streak-card">
-          <h4>Current Streak</h4>
-          <p>🔥 {currentStreak} days in a row</p>
-        </div>
+      {/* Completed Goals Count */}
+      <section className="streak-card">
+        <h4>Past Goals Completed</h4>
+        <p>🏁 {currentStreak} goals completed</p>
       </section>
 
-      {/* Steps, Calories, Workout */}
+      {/* Active Goal */}
+      {activeGoal ? (
+        <section className="progress-card">
+          <h4>🎯 Active Goal: {activeGoal.goal_type}</h4>
+          <ProgressBar
+            percentage={(activeGoal.achieved_count / activeGoal.target_count) * 100}
+            color="#3A5A99"
+          />
+          <p>{activeGoal.achieved_count} of {activeGoal.target_count} completed</p>
+          <button
+            className="dashboard-btn"
+            onClick={async () => {
+              try {
+                await axios.patch(`http://localhost:5050/api/goals/increment/${activeGoal.id}`, null, {
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                fetchCurrentGoal();
+                fetchGoalProgress();
+                fetchPastGoals(); // ✅ Refresh past goals list
+              } catch (err) {
+                console.error('Step update error:', err);
+              }
+            }}
+          >
+            ✅ Mark One Step Done
+          </button>
+        </section>
+      ) : (
+        <section className="progress-card">
+          <h4>🎉 All goals completed!</h4>
+          <p>You’ve completed {currentStreak} goals. Great job!</p>
+        </section>
+      )}
+
+      {/* ✅ Past Goals List */}
+      {pastGoals.length > 0 && (
+        <section className="goal-history">
+          <h4>Past Goals</h4>
+          <ul>
+            {pastGoals.map((goal, i) => (
+              <li key={i}>
+                ✅ {goal.goal_type} — {goal.achieved_count}/{goal.target_count} (
+                {new Date(goal.start_date).toDateString()} - {new Date(goal.end_date).toDateString()})
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Activity Summary */}
       <section className="activity-summary">
         <div className="summary-card">
           <h5>Steps Today</h5>
@@ -200,7 +271,7 @@ const Dashboard = () => {
         </section>
       )}
 
-      {/* CTA Buttons */}
+      {/* Actions */}
       <section className="dashboard-actions">
         <button className="dashboard-btn" onClick={() => navigate('/log')}>Log Activity</button>
         <button className="dashboard-btn secondary" onClick={() => navigate('/goals')}>Edit Goal</button>

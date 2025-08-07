@@ -1,3 +1,4 @@
+// src/pages/Goals.js
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
@@ -32,47 +33,51 @@ const Goals = () => {
       await axios.patch(`http://localhost:5050/api/goals/increment/${goalId}`, null, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchGoals(); // Refresh after update
+      fetchGoals();
     } catch (err) {
       console.error('Error completing step:', err.response?.data || err.message);
     }
   };
 
+  const activeGoals = goals.filter(goal => goal.achieved_count < goal.target_count);
+  const completedGoals = goals.filter(goal => goal.achieved_count >= goal.target_count);
+
   return (
     <div className="goals-page">
       <h2>My Fitness Goals</h2>
 
-      {/* Form to add goal */}
       <AddGoalForm onGoalAdded={fetchGoals} />
 
-      {/* Current Goal */}
-      {goals.length > 0 && (
-        <section className="goal-card">
-          <h4>🏃 Goal: {goals[0].goal_type}</h4>
+      {activeGoals.length > 0 ? (
+        activeGoals.map((goal) => (
+          <section key={goal.id} className="goal-card">
+            <h4>🏃 Goal: {goal.goal_type}</h4>
 
-          <ProgressBar
-            label="Progress"
-            percentage={(goals[0].achieved_count / goals[0].target_count) * 100}
-            color="#2ECC71"
-          />
+            <ProgressBar
+              label="Progress"
+              percentage={(goal.achieved_count / goal.target_count) * 100}
+              color="#2ECC71"
+            />
 
-          <p>
-            Progress: {goals[0].achieved_count} of {goals[0].target_count} completed
-          </p>
+            <p>
+              Progress: {goal.achieved_count} of {goal.target_count} completed
+            </p>
 
-          {goals[0].achieved_count < goals[0].target_count && (
-            <button className="edit-btn" onClick={() => handleCompleteStep(goals[0].id)}>
-              ✅ Mark One Step Done
-            </button>
-          )}
+            {goal.achieved_count < goal.target_count && (
+              <button className="edit-btn" onClick={() => handleCompleteStep(goal.id)}>
+                ✅ Mark One Step Done
+              </button>
+            )}
 
-          {goals[0].achieved_count >= goals[0].target_count && (
-            <p style={{ color: '#2ECC71', fontWeight: 'bold' }}>🎉 Goal Completed!</p>
-          )}
-        </section>
+            {goal.achieved_count >= goal.target_count && (
+              <p style={{ color: '#2ECC71', fontWeight: 'bold' }}>🎉 Goal Completed!</p>
+            )}
+          </section>
+        ))
+      ) : (
+        <p>No active goals yet. Add one!</p>
       )}
 
-      {/* Reminder Setting */}
       <section className="reminder-toggle">
         <label>
           <input type="checkbox" checked={reminderOn} onChange={toggleReminder} />
@@ -80,17 +85,14 @@ const Goals = () => {
         </label>
       </section>
 
-      {/* Past Goal History */}
-      {goals.length > 1 && (
+      {completedGoals.length > 0 && (
         <section className="goal-history">
           <h4>Past Goals</h4>
           <ul>
-            {goals.slice(1).map((goal, i) => (
+            {completedGoals.map((goal, i) => (
               <li key={i}>
-                {goal.achieved_count >= goal.target_count ? '✅' : '❌'}{' '}
-                {goal.achieved_count}/{goal.target_count} {goal.goal_type} (
-                {new Date(goal.start_date).toDateString()} to{' '}
-                {new Date(goal.end_date).toDateString()})
+                ✅ {goal.goal_type} — {goal.achieved_count}/{goal.target_count} (
+                {new Date(goal.start_date).toDateString()} - {new Date(goal.end_date).toDateString()})
               </li>
             ))}
           </ul>
